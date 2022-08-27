@@ -1,71 +1,86 @@
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
 const startBtn = document.querySelector(`button[data-start]`);
 const clockFace = document.querySelector(`.timer`);
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    console.log(selectedDates[0]);
+  },
+};
+
+const input = document.querySelector('#datetime-picker');
+const fp = flatpickr(input, {options});  // flatpickr
+
+
 
 class Timer {
-    constructor({onTick}) {
-        this.inrervaId = null;
-        this.isActive = false;
-        this.onTick = onTick;
+  constructor({ onTick }) {
+    this.inrervaId = null;
+    this.isActive = false;
+    this.onTick = onTick;
 
-        this.init();
-    };
-    init() {
-        const time = this.convertMs(0)
-        this.onTick(time)
+    this.init();
+  }
+  init() {
+    const time = this.convertMs(0);
+    this.onTick(time);
+  }
+  start() {
+    if (this.isActive) {
+      return;
     }
-    start() {
-        if (this.isActive) {
-            return;
-        }
-        const startTime = Date.now();
-        this.isActive = true;
+    const startTime = Date.now();
+    this.isActive = true;
 
-        this.inrervaId = setInterval(() => {
-            const currentTime = Date.now();
-            const deltaTime = currentTime - startTime;
-            const time = this.convertMs(deltaTime);
+    this.inrervaId = setInterval(() => {
+      const currentTime = Date.now();
+      const deltaTime = currentTime - startTime;
+      const time = this.convertMs(deltaTime);
 
-            this.onTick(time);
-        }, 1000);
-    };
+      this.onTick(time);
+    }, 1000);
+  }
 
-    convertMs(ms) {
-  // Number of milliseconds per unit of time
+  convertMs(ms) {
+    // Number of milliseconds per unit of time
     const second = 1000;
     const minute = second * 60;
     const hour = minute * 60;
     const day = hour * 24;
 
-  // Remaining days
+    // Remaining days
     const days = this.pad(Math.floor(ms / day));
-  // Remaining hours
+    // Remaining hours
     const hours = this.pad(Math.floor((ms % day) / hour));
-  // Remaining minutes
+    // Remaining minutes
     const minutes = this.pad(Math.floor(((ms % day) % hour) / minute));
-  // Remaining seconds
-    const seconds = this.pad(Math.floor((((ms % day) % hour) % minute) / second));
+    // Remaining seconds
+    const seconds = this.pad(
+      Math.floor((((ms % day) % hour) % minute) / second)
+    );
 
     return { days, hours, minutes, seconds };
-    };
+  }
 
-    pad(value) {
-        return String(value).padStart(2, `0`);
-    };
-};
+  pad(value) {
+    return String(value).padStart(2, `0`);
+  }
+}
 
 const timer = new Timer({
-    onTick: updateClockFace
+  onTick: updateClockFace,
 });
 
 startBtn.addEventListener(`click`, timer.start.bind(timer));
 
 function updateClockFace({ days, hours, minutes, seconds }) {
-    clockFace.textContent = `${days}:${hours}:${minutes}:${seconds}`;
+  clockFace.textContent = `${days}:${hours}:${minutes}:${seconds}`;
 }
-
-
-
-
 
 // console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
 // console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
