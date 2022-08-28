@@ -9,7 +9,7 @@ const spanHours = document.querySelector('span[data-hours]');
 const spanMinutes = document.querySelector('span[data-minutes]');
 const spanSeconds = document.querySelector('span[data-seconds]');
 
-startBtn.setAttribute('disabled', 'true');
+startBtn.disabled = true;
 
 let inrervaId = null;
 let deltaTime = null;
@@ -24,7 +24,7 @@ const options = {
     if (selectedDates[0].getTime() < options.defaultDate.getTime()) { 
       return Notiflix.Notify.failure('Please choose a date in the future');
     } else {
-      startBtn.removeAttribute('disabled');
+      startBtn.disabled = false;
     };
   },
 };
@@ -35,14 +35,15 @@ startBtn.addEventListener(`click`, onStartBtnClick);
 
 function onStartBtnClick() {
   inrervaId = setInterval(() => {
-    startBtn.disabled = true;
     deltaTime = new Date(input.value) - new Date();
-    const { days, hours, minutes, seconds } = convertMs(deltaTime);
-      spanDays.textContent = `${days}`;
-      spanHours.textContent = `${hours}`;
-      spanMinutes.textContent = `${minutes}`;
-      spanSeconds.textContent = `${seconds}`;
-    if (deltaTime <= 0) {
+    if (deltaTime >= 0) {
+       startBtn.disabled = true;
+       const { days, hours, minutes, seconds } = convertMs(deltaTime);
+       spanDays.textContent = `${days}`;
+       spanHours.textContent = `${hours}`;
+       spanMinutes.textContent = `${minutes}`;
+       spanSeconds.textContent = `${seconds}`;
+    } else {
       clearInterval(inrervaId);
       startBtn.disabled = false;
     };
