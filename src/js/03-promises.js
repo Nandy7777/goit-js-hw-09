@@ -16,7 +16,7 @@ function createPromise(position, delay) {
       }
     }, delay);
   });
-};
+}
 
 formBtn.addEventListener(`click`, onFormBtnSubmit);
 
@@ -24,7 +24,7 @@ function onFormBtnSubmit(evt) {
   evt.preventDefault();
 
   for (let i = 0; i < amountF.value; i += 1) {
-    createPromise(i + 1, Number(delayF.value) + 1 * Number(stepF.value))
+    createPromise(1 + i, Number(delayF.value) + i * Number(stepF.value))
       .then(({ position, delay }) => {
         Notiflix.Notify.success(
           `✅ Fulfilled promise ${position} in ${delay}ms`
@@ -34,6 +34,7 @@ function onFormBtnSubmit(evt) {
         Notiflix.Notify.failure(
           `❌ Rejected promise ${position} in ${delay}ms`
         );
+
       });
-  };
-};
+  }
+}
